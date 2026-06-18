@@ -139,10 +139,18 @@ def load_and_preprocess(path: str):
     y = df['CAT']
 
     # ── Step 6 : Feature Scaling ─────────────
-    scaler_std  = StandardScaler()
-    scaler_mm   = MinMaxScaler()
-    X_std   = scaler_std.fit_transform(X)
-    X_mm    = scaler_mm.fit_transform(X)
+    scaler_std = StandardScaler()
+    scaler_mm = MinMaxScaler()
+
+# Remove all non-numeric columns automatically
+    X = X.select_dtypes(include=['number'])
+
+# Fill any remaining missing values
+    X = X.fillna(X.median())
+
+# Scale the data
+    X_std = scaler_std.fit_transform(X)
+    X_mm = scaler_mm.fit_transform(X)
 
     # ── Step 7 : Train / Test Split ───────────
     X_train, X_test, y_train, y_test = train_test_split(
