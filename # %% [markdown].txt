@@ -1,0 +1,161 @@
+# %% [markdown]
+# ## Libraries
+
+# %%
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# %%
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.preprocessing import MinMaxScaler
+
+from sklearn.metrics import (
+    confusion_matrix,
+    classification_report,
+    accuracy_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+    mean_squared_error,
+    mean_absolute_error
+)
+
+# %% [markdown]
+# ## Loading The Dataset
+
+# %%
+df = pd.read_csv('swarm.csv')
+print(df.head()) 
+print(df.shape)
+
+# %% [markdown]
+# ## Data Pre-processing
+
+# %%
+print("\nMissing Values:") 
+print(df.isnull().sum())
+
+# %% [markdown]
+# ## Handling Missing Values
+
+# %%
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# %% [markdown]
+# ## Removing Duplicates
+
+# %%
+df = df.dropna()
+print("\nAfter Removing Missing Values:")
+print(df.shape)
+
+# %%
+scaler = MinMaxScaler()
+X_scaled = scaler.fit_transform(X)
+
+# %%
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+# %%
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+model.fit(X_train, y_train)
+
+# %%
+y_pred = model.predict(X_test)
+
+# %% [markdown]
+# ## Outliers
+
+# %%
+Q1 = df.quantile(0.25)
+Q3 = df.quantile(0.75)
+IQR = Q3 - Q1
+
+df = df[~((df < (Q1 - 1.5 * IQR))|(df > (Q3 + 1.5 * IQR))).any(axis=1)]
+print(df.shape)
+
+# %% [markdown]
+# ## Label Encoding
+
+# %%
+encoder = LabelEncoder()
+for col in df.columns:
+    if df[col].dtype == 'object':
+        df[col] = encoder.fit_transform(df[col].astype(str))
+
+print("Encoding Completed")
+
+# %% [markdown]
+# ## Target
+
+# %%
+df['CAT'] = [0 if i % 2 == 0 else 1 for i in range(len(df))]
+X = df.drop('CAT', axis=1)
+y = df['CAT']
+
+# %% [markdown]
+# ## Feature Scaling
+
+# %%
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# %% [markdown]
+# ## Train Test Split
+
+# %% [markdown]
+# ## Logistic Regression
+
+# %%
+
+log_model = LogisticRegression(max_iter=1000)
+log_model.fit(X_train, y_train)
+log_pred = log_model.predict(X_test)
+print("Logistic Regression Accuracy:",accuracy_score(y_test, log_pred))
+
+# %% [markdown]
+# ## Accuracy 
+
+# %%
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+r2 = r2_score(y_test, y_pred)
+print(r2)
+
+# %%
+print("Accuracy:",accuracy_score(y_test, log_pred))
+print("Precision:",precision_score(y_test, log_pred))
+print("Recall:",recall_score(y_test, log_pred))
+print("ROC-AUC:",roc_auc_score(y_test, log_prob))
+print("MSE:",mean_squared_error(y_test, svm_pred))
+print("MAE:",mean_absolute_error(y_test, svm_pred))
+
+# %%
+svm_model = SVC(kernel='rbf')
+svm_model.fit(X_train, y_train)
+svm_pred = svm_model.predict(X_test)
+print("SVM Accuracy:",accuracy_score(y_test, svm_pred))
+
+# %%
+
+
+

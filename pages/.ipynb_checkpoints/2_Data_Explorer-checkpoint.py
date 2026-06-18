@@ -1,11 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("📊 Dashboard")
+st.title("📁 Data Explorer")
 
 df = pd.read_csv("cleaned_locust_dataset.csv")
-
-st.metric("Total Records", df.shape[0])
-st.metric("Total Features", df.shape[1])
-
 st.dataframe(df.head())
