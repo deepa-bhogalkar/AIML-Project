@@ -12,7 +12,7 @@ model_choice = st.selectbox(
 
 # Use first 6 features as inputs
 sample_cols = data["features"][:6]
-col_means = data["Longitude"].mean()
+col_means = data["X"].mean()
 
 st.write("Enter feature values:")
 
